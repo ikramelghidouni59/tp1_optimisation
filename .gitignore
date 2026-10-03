@@ -2,8 +2,7 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 
-results/
-resultats/
 *.zip
+*.npz
 
 exercice3_clustering/data/fashion_mnist.csv
