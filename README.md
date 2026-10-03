@@ -1,29 +1,68 @@
-TP d'optimisation avec NumPy
+# TP d'optimisation avec NumPy
 
-TP du Master IAA FSA Ouarzazate, Université Ibnou Zohr, 2025/2026. Réalisé par Ikram El Ghidouni, encadré par Dr. A. HADRI.
+TP du Master IAA, FSA Ouarzazate, Université Ibnou Zohr, 2025/2026.
+Réalisé par Ikram El Ghidouni, encadré par Dr. A. HADRI.
 
-Dans ce TP, j'ai codé avec NumPy sept méthodes d'optimisation : GD, GD avec recherche de pas, SGD, Momentum, AdaGrad, RMSprop et Adam. Je n'ai pas utilisé scipy.optimize ni torch.optim.
+Sept méthodes d'optimisation codées avec NumPy : GD, GD avec recherche de pas, SGD,
+Momentum, AdaGrad, RMSprop et Adam (plus Lloyd pour le clustering). Aucun optimiseur
+préfabriqué (`scipy.optimize`, `torch.optim`) ni différentiation automatique n'est utilisé.
 
-Les trois exercices
-Régression (OLS, Ridge, Ridge à noyau RBF) sur les jeux nonlinear et diabetes.
-Classification de classification_spiral3.csv avec un petit réseau de neurones (2 → 16 → 3, softmax).
-Clustering en minimisant une fonction soft-min J_tau, comparé à la méthode de Lloyd, sur clustering_blobs3.csv, clustering_wine.csv, Fashion-MNIST et MNIST.
+## Contenu
+- `exercice_1/` : régression (OLS, Ridge, Ridge à noyau RBF) sur nonlinear et diabetes.
+- `exercice_2/` : classification des spirales avec un réseau 2 → 16 → 3 (ReLU, softmax).
+- `exercice_3/` : clustering par optimisation d'une perte soft-min, comparé à Lloyd
+  (blobs, wine, Fashion-MNIST, MNIST), dans un notebook.
 
-Utilisation
+## Installation
+```bash
+pip install -r requirements.txt
+```
+Versions utilisées : Python 3.13, NumPy 2.1.3, pandas 2.2.3.
 
-Il faut Python avec numpy, pandas, matplotlib et scikit-learn.
+## Vérification (gradients et règles de mise à jour)
+```bash
+cd exercice_1 && python verify_ex1.py --data-dir data
+cd ../exercice_2 && python verify_ex2.py --data data/classification_spiral3.csv
+```
 
-pip install numpy pandas matplotlib scikit-learn
+## Exécution
+Exercice 1 (budget complet : 2000 époques en lot complet, 300 en mini-lots) :
+```bash
+cd exercice_1
+python ex1_regression.py --data-dir data --out results/full
+```
+Exercice 2 :
+```bash
+cd exercice_2
+python ex2_classification.py --data data/classification_spiral3.csv --out results/ex2_full
+```
+Exercice 3 : ouvrir `exercice_3/TP_optimisation_ex3.ipynb` (Jupyter ou Google Colab) et
+exécuter toutes les cellules. Les fichiers `results_raw.csv` et `results_summary.csv` sont
+écrits dans le dossier de sortie du notebook.
 
+Un test rapide (budgets réduits, une graine) est possible avec l'option `--quick`.
 
-Méthode
-Les données sont séparées en train, validation et test. La standardisation est calculée sur le train seulement.
-Les hyperparamètres sont choisis sur la validation. Le test sert uniquement à la fin.
-Les graines utilisées sont 42, 123 et 2024. Les résultats sont donnés en moyenne + ou - écart type.
-Les gradients sont vérifiés avec des différences finies centrales .
-Résultats en bref
-Exercice 1 : sur nonlinear, le Ridge à noyau RBF avec Adam est le meilleur . Sur diabetes, OLS avec SGD est le meilleur .
-Exercice 2 : tous les optimiseurs dépassent 98 % d'accuracy. Adam est le meilleur .
-Exercice 3 : sur blobs, toutes les méthodes donnent le même résultat. Sur wine, l'ARI est autour de 0.90. Sur Fashion-MNIST et MNIST, l'ARI reste entre 0.33 et 0.36.
+## Données
+- CSV fournis dans `exercice_1/data`, `exercice_2/data`, `exercice_3/data`
+  (`clustering_wine.csv` est généré par le notebook via scikit-learn s'il est absent).
+- Pour les images (exercice 3) : placer `mnist_50k_10k_10k.npz` et
+  `fashion_mnist_50k_10k_10k.npz` dans `exercice_3/data/` (fichiers de l'archive de la fiche).
+  À défaut, le notebook tente de les reconstruire avec `tensorflow.keras.datasets`.
 
-Les tableaux complets sont  dans le rapport.
+## Méthode
+- Séparation train / validation / test ; standardisation calculée sur le train seulement.
+- Hyperparamètres choisis sur la validation ; le test sert uniquement à l'évaluation finale.
+- Graines 42, 123 et 2024 ; résultats en moyenne ± écart type.
+- Gradients vérifiés par différences finies centrales (h = 1e-5).
+
+## Résultats principaux
+Voir le rapport PDF pour les tableaux complets.
+- Exercice 1 : Ridge à noyau RBF avec Adam retenu sur la validation pour nonlinear et diabetes.
+- Exercice 2 : spirales uniquement ; toutes les méthodes dépassent 0.98 d'accuracy ;
+  Adam a la meilleure moyenne, mais l'écart est d'environ une observation sur 90.
+- Exercice 3 : blobs identique pour toutes les méthodes ; wine ARI ≈ 0.90 ; images :
+  résultats préliminaires (≈ 8 époques), ARI entre 0.33 et 0.36.
+
+## Limites
+Exercice 2 limité aux spirales avec une architecture différente de la fiche ;
+exercice 3 sur images à budget court ; trois graines seulement.
